@@ -1,0 +1,2 @@
+data_hora;duracao_s;pontos;acertos;erros_lixeira;lixos_perdidos;erros_1a_metade;erros_2a_metade;erros_por_min_1a;erros_por_min_2a;consultas_guia
+2026-11-23 12:10:04;52;80;8;2;1;1;1;2,3;2,3;0

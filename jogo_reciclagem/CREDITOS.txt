@@ -1,0 +1,21 @@
+CREDITOS DOS ASSETS
+===================
+
+Personagem (assets/jogador/)
+  Desenhado para este trabalho em pixel art, inspirado no operario de capacete
+  do pacote RPG Urban Pack, de Kenney (CC0): https://kenney.nl/assets/rpg-urban-pack
+
+Icones de teclas e mouse (assets/teclas/)
+  Kenney - Input Prompts, licenca CC0 (dominio publico)
+  https://kenney.nl/assets/input-prompts
+
+Sprites de lixo (assets/lixos/)
+  PREENCHER: autor, site de origem e licenca da imagem de lixos usada.
+  (Nao foi possivel identificar a fonte automaticamente. Confira antes de entregar.)
+
+Lixeiras (assets/lixeira_*.png) e plano de fundo (assets/fundo.png)
+  Criados especialmente para este trabalho, em pixel art.
+
+Observacao sobre o conteudo (itens nao reciclaveis)
+  As dicas e a classificacao dos itens (assets/lixos e ITENS em main.py) devem ser
+  conferidas com a regra da coleta seletiva do municipio antes da entrega.
