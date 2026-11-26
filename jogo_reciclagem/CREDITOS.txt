@@ -1,21 +1,57 @@
-CREDITOS DOS ASSETS
-===================
+CRÉDITOS E LICENÇAS DOS ASSETS
+==============================
+(Os itens marcados com ATRIBUIÇÃO exigem citar o autor; por isso aparecem também na tela inicial do jogo.)
 
-Personagem (assets/jogador/)
-  Desenhado para este trabalho em pixel art, inspirado no operario de capacete
-  do pacote RPG Urban Pack, de Kenney (CC0): https://kenney.nl/assets/rpg-urban-pack
+IMAGENS
+-------
+Lixos (assets/lixos/)                                                  ATRIBUIÇÃO
+  "Recycle items set", de Clint Bellanger
+  Licença: CC-BY 3.0 ou OGA-BY 3.0
+  https://opengameart.org/content/recycle-items-set
+  Modificações: itens recortados um a um, fundo removido, reduzidos na tela.
 
-Icones de teclas e mouse (assets/teclas/)
-  Kenney - Input Prompts, licenca CC0 (dominio publico)
+Ícones de teclas e mouse (assets/teclas/)
+  Kenney - Input Prompts. Licença: CC0 (domínio público)
   https://kenney.nl/assets/input-prompts
+  Modificações: recortados da imagem de pré-visualização do pacote.
 
-Sprites de lixo (assets/lixos/)
-  PREENCHER: autor, site de origem e licenca da imagem de lixos usada.
-  (Nao foi possivel identificar a fonte automaticamente. Confira antes de entregar.)
+Lixeiras (assets/lixeira_*.png), plano de fundo (assets/fundo.png) e personagem (assets/jogador/)
+  Criados para este trabalho, em pixel art, com assistência de IA (Claude, da Anthropic).
+  O personagem é inspirado no operário do pacote "RPG Urban Pack", de Kenney (CC0):
+  https://kenney.nl/assets/rpg-urban-pack
 
-Lixeiras (assets/lixeira_*.png) e plano de fundo (assets/fundo.png)
-  Criados especialmente para este trabalho, em pixel art.
+ÁUDIO (assets/audio/)
+---------------------
+Música de fundo: musica.mp3                                             ATRIBUIÇÃO
+  "When i'm feeling a bit snowed-in", de Bonky
+  Licença: OGA-BY 4.0
+  https://opengameart.org/content/when-im-feeling-a-bit-snowed-in
+  Modificações: nenhuma (arquivo renomeado).
 
-Observacao sobre o conteudo (itens nao reciclaveis)
-  As dicas e a classificacao dos itens (assets/lixos e ITENS em main.py) devem ser
-  conferidas com a regra da coleta seletiva do municipio antes da entrega.
+Som de lixo na lixeira certa: acerto.wav
+  "Correct Bell", de Fupi. Licença: CC0
+  https://opengameart.org/content/correct-bell
+  Modificações: convertido para WAV de 16 bits.
+
+Som de lixo na lixeira errada: erro.wav                                 ATRIBUIÇÃO
+  "Wrong choice, Caught", de DavidW
+  Licença: CC-BY 3.0 / CC-BY 4.0 / OGA-BY 3.0 / OGA-BY 4.0
+  https://opengameart.org/content/wrong-choice-caught
+  Modificações: convertido para WAV de 16 bits e volume aumentado em 6 dB.
+
+Som de lixo que sumiu: sumiu.wav
+  "Click", de qubodup. Licença: CC0
+  https://opengameart.org/content/click
+  Modificações: convertido para WAV de 16 bits.
+
+CÓDIGO
+------
+main.py: desenvolvido pelo grupo com assistência de IA (Claude, da Anthropic).
+>> Ajustem esta frase ao que o grupo realmente fez e declarem o uso de IA na seção 16 do GDD. <<
+
+NOTA SOBRE O CONTEÚDO EDUCATIVO
+-------------------------------
+A classificação dos itens e as dicas (dicionário ITENS em main.py) devem ser conferidas com a regra
+da coleta seletiva do município antes da entrega. Caixa de pizza suja, copo de isopor, caneca de
+cerâmica e aerossol pressurizado aparecem como itens "não recicláveis" (rejeito); a própria autora
+dos sprites os lista à parte dos materiais recicláveis.

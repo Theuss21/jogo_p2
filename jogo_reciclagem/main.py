@@ -16,6 +16,7 @@ PASTA_ASSETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets"
 PASTA_DADOS = (os.path.dirname(sys.executable) if getattr(sys, "frozen", False)
                else os.path.dirname(os.path.abspath(__file__)))
 ARQUIVO_RESULTADOS = "resultados.csv"
+PASTA_AUDIO = os.path.join(PASTA_ASSETS, "audio")
 
 VELOCIDADE_JOGADOR = 260       # pixels por segundo
 MARGEM_COLETA = 16             # folga (px) ao redor do jogador para pegar o lixo
@@ -44,6 +45,21 @@ REJEITO_CHANCE_MAX = 0.30      # chance máxima (atingida em REJEITO_TEMPO_MAX)
 REJEITO_TEMPO_MAX = 120.0
 COR_ACERTO = (120, 225, 130)
 COR_ERRO = (255, 120, 100)
+
+# Áudio: música de fundo e efeitos (nome: (arquivo, volume de 0 a 1)).
+ARQUIVO_MUSICA = "musica.mp3"
+VOLUME_MUSICA = 0.30
+EFEITOS_SONOROS = {
+    "acerto": ("acerto.wav", 0.8),   # lixo na lixeira certa
+    "erro": ("erro.wav", 0.9),       # lixo na lixeira errada
+    "sumiu": ("sumiu.wav", 0.6),     # lixo sumiu sem ser coletado
+}
+
+# Créditos exigidos pelas licenças (aparecem na tela inicial). Detalhes em CREDITOS.txt.
+CREDITOS_NA_TELA = [
+    "Lixos: Clint Bellanger (CC-BY 3.0)  |  Música: Bonky (OGA-BY 4.0)",
+    "Sons: DavidW (CC-BY 3.0), Fupi (CC0), qubodup (CC0)  |  Ícones: Kenney (CC0)",
+]
 ESCALA_ICONE = 2               # ampliação (inteira) dos ícones de teclas na tela inicial
 
 # Tipos de lixo: nome -> cor (usada nos placeholders)
@@ -83,12 +99,12 @@ ITENS = {
         ("Lata de atum", "Lata de conserva: enxágue e recicle como metal."),
         ("Lata de conserva", "Latas de aço são recicláveis."),
         ("Lata de refrigerante", "Lata de alumínio é muito valorizada na reciclagem."),
-        ("Aerossol", "Aerossol só é reciclável se estiver vazio."),
     ],
     "rejeito": [
         ("Caixa de pizza suja", "A gordura contamina o papelão: não é reciclável."),
         ("Copo de isopor", "O isopor costuma não ser aceito na coleta comum."),
         ("Caneca de cerâmica", "Cerâmica não é reciclável (nem no vidro)."),
+        ("Aerossol", "Aerossol pressurizado não vai na reciclagem comum."),
     ],
 }
 
@@ -362,6 +378,49 @@ class Lixeira:
 # ---------------------------------------------------------------
 # JOGO
 # ---------------------------------------------------------------
+class Audio:
+    """Música de fundo e efeitos sonoros.
+    Se não houver placa de som (ou faltar algum arquivo), o jogo continua normalmente, sem som."""
+
+    def __init__(self):
+        self.efeitos = {}
+        self.pronto = self._iniciar_mixer()
+        if not self.pronto:
+            return
+        for nome, (arquivo, volume) in EFEITOS_SONOROS.items():
+            try:
+                som = pygame.mixer.Sound(os.path.join(PASTA_AUDIO, arquivo))
+                som.set_volume(volume)
+                self.efeitos[nome] = som
+            except (pygame.error, FileNotFoundError):
+                pass   # arquivo ausente ou inválido: esse efeito fica mudo
+
+    @staticmethod
+    def _iniciar_mixer():
+        if pygame.mixer.get_init():
+            return True
+        try:
+            pygame.mixer.init()
+            return True
+        except pygame.error:
+            return False
+
+    def tocar_musica(self):
+        if not self.pronto:
+            return
+        try:
+            pygame.mixer.music.load(os.path.join(PASTA_AUDIO, ARQUIVO_MUSICA))
+            pygame.mixer.music.set_volume(VOLUME_MUSICA)
+            pygame.mixer.music.play(-1, fade_ms=1500)   # -1 = repete para sempre
+        except (pygame.error, FileNotFoundError):
+            pass
+
+    def tocar(self, nome):
+        som = self.efeitos.get(nome)
+        if som:
+            som.play()
+
+
 class Jogo:
     def __init__(self):
         pygame.init()
@@ -372,6 +431,9 @@ class Jogo:
         self.fonte_grande = pygame.font.SysFont(None, 72)
         self.fonte_media = pygame.font.SysFont(None, 36)
         self.fonte_pequena = pygame.font.SysFont(None, 22)
+
+        self.audio = Audio()
+        self.audio.tocar_musica()
 
         # sprites (arquivo em assets/ ou fallback desenhado)
         sprite_unico = carregar_sprite_proporcional("jogador.png", 64, (48, 60), fallback_jogador)
@@ -562,6 +624,7 @@ class Jogo:
         """Resolve acerto ou erro (vale tanto para depositar quanto para arremessar)."""
         if lixeira.tipo == lixo.tipo:
             self.pontos += 10
+            self.audio.tocar("acerto")
             self.registrar("acerto", lixo, lixeira.tipo)
             if lixo.tipo == TIPO_REJEITO:    # acertou uma 'pegadinha': explica por que não é reciclável
                 self.mostrar_mensagem("Acertou! +10", f"{lixo.nome}: {lixo.dica}", COR_ACERTO, 3.0)
@@ -569,6 +632,7 @@ class Jogo:
                 self.mostrar_mensagem("Acertou! +10", "", COR_ACERTO, 1.2)
         else:
             self.registrar("erro", lixo, lixeira.tipo)
+            self.audio.tocar("erro")
             certa = NOMES_TIPOS.get(lixo.tipo, lixo.tipo.upper())
             self.perder_vida("Lixeira errada! -1 vida", f"{lixo.nome} vai no {certa}. {lixo.dica}".strip())
 
@@ -642,6 +706,7 @@ class Jogo:
             if lixo.tempo_restante <= 0:
                 self.lixos.remove(lixo)
                 self.registrar("perdido", lixo)
+                self.audio.tocar("sumiu")
                 self.perder_vida("Lixo perdido! -1 vida",
                                  f"{lixo.nome} sumiu: pegue o lixo antes de {int(TEMPO_DE_VIDA_LIXO)} segundos.")
                 if self.fim_de_jogo:
@@ -717,6 +782,11 @@ class Jogo:
                 tela.blit(self.fonte.render(linha, True, branco), (x_descricao, ty))
                 ty += 24
             y += 52
+
+        # --- créditos (as licenças CC-BY e OGA-BY exigem citar o autor) ---
+        for k, linha in enumerate(CREDITOS_NA_TELA):
+            img = self.fonte_pequena.render(linha, True, (170, 180, 170))
+            tela.blit(img, img.get_rect(midtop=(LARGURA // 2, ALTURA - 92 + k * 17)))
 
         # --- chamada para começar (pisca entre duas cores) ---
         cor = destaque if (pygame.time.get_ticks() // 500) % 2 == 0 else branco
